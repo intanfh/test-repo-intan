@@ -1,0 +1,500 @@
+{
+	"info": {
+		"_postman_id": "dc8e62a8-bee2-444d-9c72-f7f2473a24ce",
+		"name": "ApiBooks",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25257307"
+	},
+	"item": [
+		{
+			"name": "API Authentication",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// ✅ 1. Cek status code\r",
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"// ✅ 2. Cek response time\r",
+							"pm.test(\"Response time is less than 1000ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+							"});\r",
+							"\r",
+							"// ✅ 3. Ambil token dari response dan simpan\r",
+							"const jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Verify access token is not null\", function () {\r",
+							"    pm.expect(jsonData.accessToken).to.not.be.null;\r",
+							"    pm.environment.set(\"accessToken\", jsonData.accessToken);\r",
+							"    console.log(\"Access Token set:\", jsonData.accessToken);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Membuat email acak menggunakan timestamp\r",
+							"const randomEmail = `random${Date.now()}@example.com`;\r",
+							"\r",
+							"// Menyimpan email acak ke dalam environment variable\r",
+							"pm.environment.set(\"randomEmail\", randomEmail);\r",
+							"\r",
+							"// Menampilkan email acak ke console untuk debugging\r",
+							"console.log(\"Generated Random Email: \" + randomEmail);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n     \"clientName\": \"{{name}}\",\n    \"clientEmail\": \"{{randomEmail}}\"\n }\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api-clients/",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api-clients",
+						""
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "Intan",
+							"disabled": true
+						},
+						{
+							"key": "email",
+							"value": "heryan@mail.com",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Status",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test untuk memeriksa apakah status code adalah 200\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200); \r",
+							"});\r",
+							"\r",
+							"// Test untuk memeriksa apakah response time kurang dari 500ms\r",
+							"pm.test(\"Response time is less than 500ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+							"});\r",
+							"\r",
+							"// Test untuk memeriksa apakah response message status adalah \"OK\"\r",
+							"pm.test(\"Response message status = OK\", function () {\r",
+							"    var jsonResponse = pm.response.json(); \r",
+							"    pm.expect(jsonResponse.status, \"Response status is not OK\").to.eql(\"OK\"); \r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://simple-books-api.glitch.me/status",
+					"protocol": "https",
+					"host": [
+						"simple-books-api",
+						"glitch",
+						"me"
+					],
+					"path": [
+						"status"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Single Book",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test untuk memeriksa apakah status code adalah 200\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200); \r",
+							"});\r",
+							"\r",
+							"// Test untuk memeriksa apakah response time kurang dari 500ms\r",
+							"pm.test(\"Response time is less than 500ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+							"});\r",
+							"\r",
+							"// Test untuk memverifikasi nilai-nilai dalam response message\r",
+							"pm.test(\"Verify all values in the response message are correct\", function () {\r",
+							"    var jsonResponse = pm.response.json();\r",
+							"    pm.expect(jsonResponse.id, \"Id should be 1\").to.eql(1);\r",
+							"    pm.expect(jsonResponse.name, \"Name should be 'The Russian'\").to.eql(\"The Russian\");\r",
+							"    pm.expect(jsonResponse.author, \"Author should be 'James Patterson and James 0. Born'\").to.eql(\"James Patterson and James 0. Born\");\r",
+							"    pm.expect(jsonResponse.isbn, \"ISBN should be '1780899475'\").to.eql(\"1780899475\");\r",
+							"    pm.expect(jsonResponse.type, \"Type should be 'Fiction'\").to.eql(\"Fiction\");\r",
+							"    pm.expect(jsonResponse.price, \"Price should be 12.98\").to.eql(12.98);\r",
+							"    pm.expect(jsonResponse.currentStock, \"Current Stock should be 12\").to.eql(12);\r",
+							"    pm.expect(jsonResponse.available, \"Available should be true\").to.eql(true);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://simple-books-api.glitch.me/books/1",
+					"protocol": "https",
+					"host": [
+						"simple-books-api",
+						"glitch",
+						"me"
+					],
+					"path": [
+						"books",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Submit Order",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test untuk memeriksa apakah status code adalah 201\r",
+							"const response = pm.response;\r",
+							"pm.collectionVariables.set(\"orderId\", response.json().orderId)\r",
+							"\r",
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);  // Memastikan status code adalah 201\r",
+							"});\r",
+							"\r",
+							"// Test untuk memeriksa apakah response time kurang dari 1000ms\r",
+							"pm.test(\"Response time is less than 1000ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(1000);});\r",
+							"\r",
+							"// Test untuk memverifikasi bahwa 'created' bernilai true\r",
+							"pm.test(\"Verify the 'created' value in the response message = true\", function () {\r",
+							"    var jsonResponse = pm.response.json();\r",
+							"    pm.expect(jsonResponse.created, \"'created' should be true\").to.eql(true);\r",
+							"});\r",
+							"\r",
+							"// Test untuk memverifikasi bahwa 'orderId' tidak null\r",
+							"/*pm.test(\"Verify the 'orderId' value in the response message is not null\", function () {\r",
+							"    var jsonResponse = pm.response.json();\r",
+							"    pm.expect(jsonResponse.orderId, \"'orderId' should not be null\").to.not.be.null;\r",
+							"});*/\r",
+							"\r",
+							"const keys = [\"created\", \"orderId\"];\r",
+							"\r",
+							"keys.forEach((key) => {\r",
+							"    pm.test(\"Key \" + key + \" is successfully shown\", function() {\r",
+							"        pm.expect(response.text()).to.include(key);\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Order is successfully created\", function(){\r",
+							"    pm.expect(response.json().created).to.eql(true);\r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// get token\r",
+							"if (!pm.environment.get(\"accessToken\")) {\r",
+							"    console.log(\"Access token is missing!\");\r",
+							"\r",
+							"} else {\r",
+							"    pm.request.headers.add({\r",
+							"        key: \"Authorization\",\r",
+							"        value: `Bearer ${pm.environment.get(\"accessToken\")}`\r",
+							"    });\r",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"bookId\": 1,\n  \"customerName\": \"Nini\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/orders",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Single Order",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Menyimpan nilai bookId dan customerName yang digunakan untuk order\r",
+							"pm.environment.set(\"bookId\", \"1\");  // Gantilah dengan bookId yang sesuai\r",
+							"pm.environment.set(\"customerName\", \"Nini\");  // Gantilah dengan nama customer yang sesuai\r",
+							"\r",
+							"// Menyimpan orderId yang digunakan untuk verifikasi nanti\r",
+							"if (pm.environment.get(\"orderId\")) {\r",
+							"    console.log(\"Order ID is already set:\", pm.environment.get(\"orderId\"));\r",
+							"} else {\r",
+							"    console.log(\"Order ID not set yet.\");\r",
+							"}\r",
+							"\r",
+							"/*\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response time is less than 10000ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(10000);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Verify response values are correct\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.id).to.equal(pm.environment.get(\"orderId\"));\r",
+							"    pm.expect(jsonData.bookId).to.equal(1);\r",
+							"    pm.expect(jsonData.customerName).to.equal(\"Nini\");\r",
+							"});\r",
+							"*/"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test untuk memeriksa apakah status code adalah 200\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);  // Memastikan status code adalah 200\r",
+							"});\r",
+							"\r",
+							"// Test untuk memeriksa apakah response time kurang dari 10000ms\r",
+							"pm.test(\"Response time is less than 1000ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+							"});\r",
+							"\r",
+							"// Test untuk memverifikasi bahwa nilai-nilai dalam response body sesuai dengan yang diharapkan\r",
+							"pm.test(\"Verify all values in the response message are correct\", function () {\r",
+							"    var jsonResponse = pm.response.json();\r",
+							"\r",
+							"    // Mengambil nilai yang disimpan dalam environment dari submit order request\r",
+							"    var expectedBookId = pm.environment.get(\"bookId\");\r",
+							"    var expectedCustomerName = pm.environment.get(\"customerName\");\r",
+							"\r",
+							"    // Memverifikasi nilai Id di response\r",
+							"    pm.expect(jsonResponse.id, \"Id should match the response from submit order\").to.eql(pm.environment.get(\"orderId\"));\r",
+							"\r",
+							"    // Memverifikasi nilai Book Id sesuai dengan yang dikirim dalam request\r",
+							"    pm.expect(jsonResponse.bookId, \"Book Id should be \" + expectedBookId).to.eql(Number(expectedBookId));\r",
+							"\r",
+							"    // Memverifikasi nilai Customer name sesuai dengan yang dikirim dalam request\r",
+							"    pm.expect(jsonResponse.customerName, \"Customer name should be \" + expectedCustomerName).to.eql(expectedCustomerName);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/orders/{{orderId}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"orders",
+						"{{orderId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Order",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test untuk memeriksa apakah status code adalah 204\r",
+							"pm.test(\"Status code is 204\", function () {\r",
+							"    pm.response.to.have.status(204);  // Memastikan status code adalah 204\r",
+							"});\r",
+							"\r",
+							"// Test untuk memeriksa apakah response time kurang dari 1000ms\r",
+							"pm.test(\"Response time is less than 1000ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(1000);  // Memastikan response time kurang dari 1000ms\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Contoh jika diperlukan token untuk autentikasi\r",
+							"if (pm.environment.get(\"accessToken\")) {\r",
+							"    pm.request.headers.add({\r",
+							"        key: \"Authorization\",\r",
+							"        value: \"Bearer \" + pm.environment.get(\"accessToken\")\r",
+							"    });\r",
+							"} else {\r",
+							"    console.log(\"Access token is missing!\");\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://simple-books-api.glitch.me/orders/{{orderId}}",
+					"protocol": "https",
+					"host": [
+						"simple-books-api",
+						"glitch",
+						"me"
+					],
+					"path": [
+						"orders",
+						"{{orderId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "orderId",
+			"value": ""
+		}
+	]
+}
